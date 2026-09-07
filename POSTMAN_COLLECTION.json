@@ -1,0 +1,336 @@
+{
+  "info": {
+    "_postman_id": "9a123456-789a-bcde-f012-3456789abcde",
+    "name": "Gestor de Tareas - Spring Boot API",
+    "description": "Colección de pruebas completa para el Gestor de Tareas en Postman. Incluye flujo secuencial de pruebas CRUD, entrega y calificación de tareas.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Asignaturas",
+      "item": [
+        {
+          "name": "1.1 Crear Asignatura (POO)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Programación Orientada a Objetos\",\n  \"codigo\": \"SIS-301\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/asignaturas",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "asignaturas"]
+            }
+          }
+        },
+        {
+          "name": "1.2 Listar Asignaturas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/asignaturas",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "asignaturas"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Profesores",
+      "item": [
+        {
+          "name": "2.1 Registrar Profesor",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"DOC-2026\",\n  \"nombre\": \"Eva Patricia Vásquez\",\n  \"documento\": \"52112233\",\n  \"edad\": 40,\n  \"correo\": \"eva.vasquez@universidad.edu.co\",\n  \"password\": \"docente123\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/profesores",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "profesores"]
+            }
+          }
+        },
+        {
+          "name": "2.2 Listar Profesores",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/profesores",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "profesores"]
+            }
+          }
+        },
+        {
+          "name": "2.3 Asignar Materia a Profesor",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/profesores/1/asignar-materia/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "profesores", "1", "asignar-materia", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Estudiantes",
+      "item": [
+        {
+          "name": "3.1 Registrar Estudiante",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Reichel Mariana Arias\",\n  \"documento\": \"1001223344\",\n  \"codigo\": \"20261001\",\n  \"edad\": 20,\n  \"semestre\": 3,\n  \"correo\": \"reichel.arias@universidad.edu.co\",\n  \"password\": \"estudiante123\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/estudiantes",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "estudiantes"]
+            }
+          }
+        },
+        {
+          "name": "3.2 Listar Estudiantes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/estudiantes",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "estudiantes"]
+            }
+          }
+        },
+        {
+          "name": "3.3 Inscribir Asignatura a Estudiante",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/estudiantes/1/inscribir/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "estudiantes", "1", "inscribir", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Tareas Academicas (Flujo Central)",
+      "item": [
+        {
+          "name": "4.1 Crear Tarea Académica (Urgente < 24h)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Taller 1: Diagramas de Clases y POO\",\n  \"descripcion\": \"Construir el prototipo de arquitectura y capa model del proyecto.\",\n  \"fechaEntrega\": \"2026-09-07 14:00:00\",\n  \"prioridad\": \"ALTA\",\n  \"material\": \"https://campus.universidad.edu.co/materiales/taller1.pdf\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/tareas?asignaturaId=1&profesorId=1&estudianteId=1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "tareas"],
+              "query": [
+                { "key": "asignaturaId", "value": "1" },
+                { "key": "profesorId", "value": "1" },
+                { "key": "estudianteId", "value": "1" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "4.2 Listar Todas las Tareas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/tareas",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "tareas"]
+            }
+          }
+        },
+        {
+          "name": "4.3 Consultar Tareas Urgentes (< 24h)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/tareas/urgentes",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "tareas", "urgentes"]
+            }
+          }
+        },
+        {
+          "name": "4.4 Filtrar Tareas por Estado (PENDIENTE)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/tareas/estado/PENDIENTE",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "tareas", "estado", "PENDIENTE"]
+            }
+          }
+        },
+        {
+          "name": "4.5 Estudiante Entrega la Tarea",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/tareas/1/entregar",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "tareas", "1", "entregar"]
+            }
+          }
+        },
+        {
+          "name": "4.6 Profesor Califica la Tarea (Nota 4.8)",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/tareas/1/calificar?nota=4.8&profesorId=1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "tareas", "1", "calificar"],
+              "query": [
+                { "key": "nota", "value": "4.8" },
+                { "key": "profesorId", "value": "1" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Pruebas de Errores y Validaciones (Casos Fallidos Esperados)",
+      "item": [
+        {
+          "name": "5.1 Error al Calificar con Nota Inválida (ej: 6.0)",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/tareas/1/calificar?nota=6.0&profesorId=1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "tareas", "1", "calificar"],
+              "query": [
+                { "key": "nota", "value": "6.0" },
+                { "key": "profesorId", "value": "1" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "5.2 Error al Crear Tarea con Título Vacío (Validación)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"\",\n  \"descripcion\": \"Sin titulo\",\n  \"fechaEntrega\": \"2026-09-08 10:00:00\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/tareas?asignaturaId=1&profesorId=1&estudianteId=1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "tareas"],
+              "query": [
+                { "key": "asignaturaId", "value": "1" },
+                { "key": "profesorId", "value": "1" },
+                { "key": "estudianteId", "value": "1" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "5.3 Error 404 al Buscar Recurso Inexistente",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/tareas/9999",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "tareas", "9999"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
