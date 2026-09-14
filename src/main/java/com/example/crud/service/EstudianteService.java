@@ -73,7 +73,7 @@ public class EstudianteService {
                 .orElseThrow(() -> new RecursoNoEncontradoException("Asignatura no encontrada con el ID: " + idAsignatura));
 
         // Regla 4: Máximo 8 asignaturas por estudiante
-        if (estudiante.getAsignaturas() != null && estudiante.getAsignaturas().size() >= Estudiante.MAX_ASIGNATURAS) {
+        if (estudiante.getAsignaturas() != null && estudiante.getAsignaturas().contains(asignatura)) { throw new ReglaNegocioException("El estudiante ya se encuentra matriculado en esta asignatura."); } if (estudiante.getAsignaturas() != null && estudiante.getAsignaturas().size() >= Estudiante.MAX_ASIGNATURAS) {
             throw new ReglaNegocioException("El estudiante no puede matricular más de " + Estudiante.MAX_ASIGNATURAS + " asignaturas.");
         }
 

@@ -5,6 +5,7 @@ import com.example.crud.dto.AsignaturaResponseDto;
 import com.example.crud.dto.EstudianteResponseDto;
 import com.example.crud.dto.mapper.ModelDtoMapper;
 import com.example.crud.exception.RecursoNoEncontradoException;
+import com.example.crud.exception.ReglaNegocioException;
 import com.example.crud.model.Asignatura;
 import com.example.crud.model.Profesor;
 import com.example.crud.repository.AsignaturaRepository;
@@ -49,6 +50,9 @@ public class AsignaturaService {
         if (dto.getProfesorId() != null) {
             Profesor profesor = profesorRepository.findById(dto.getProfesorId())
                     .orElseThrow(() -> new RecursoNoEncontradoException("Profesor no encontrado con el ID: " + dto.getProfesorId()));
+            if (profesor.getAsignaturas() != null && profesor.getAsignaturas().size() >= Profesor.MAX_ASIGNATURAS) {
+                throw new ReglaNegocioException("El profesor ya tiene el límite máximo de " + Profesor.MAX_ASIGNATURAS + " asignaturas asignadas.");
+            }
             asignatura.setProfesor(profesor);
         }
         Asignatura guardada = asignaturaRepository.save(asignatura);
@@ -64,6 +68,11 @@ public class AsignaturaService {
         if (dto.getProfesorId() != null) {
             Profesor profesor = profesorRepository.findById(dto.getProfesorId())
                     .orElseThrow(() -> new RecursoNoEncontradoException("Profesor no encontrado con el ID: " + dto.getProfesorId()));
+            if (existente.getProfesor() == null || !existente.getProfesor().getIdUsuario().equals(dto.getProfesorId())) {
+                if (profesor.getAsignaturas() != null && profesor.getAsignaturas().size() >= Profesor.MAX_ASIGNATURAS) {
+                    throw new ReglaNegocioException("El profesor ya tiene el límite máximo de " + Profesor.MAX_ASIGNATURAS + " asignaturas asignadas.");
+                }
+            }
             existente.setProfesor(profesor);
         }
         Asignatura actualizada = asignaturaRepository.save(existente);

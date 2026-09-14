@@ -17,4 +17,8 @@ public class ProfesorResponseDto extends UsuarioResponseDto {
     private Integer edad;
     private List<Long> asignaturasIds;
     private Integer totalTareasAsignadas;
+
+    public Long getIdProfesor() {
+        return getIdUsuario();
+    }
 }

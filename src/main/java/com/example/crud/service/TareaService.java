@@ -114,6 +114,7 @@ public class TareaService {
 
     public TareaResponseDto marcarComoEntregada(Long idTarea) {
         Tarea tarea = buscarEntidadPorId(idTarea);
+        if (tarea.getEstado() == EstadoTarea.CALIFICADA) { throw new ReglaNegocioException("No se puede entregar una tarea que ya ha sido calificada."); }
         tarea.setEstado(EstadoTarea.ENTREGADA);
         Tarea guardada = tareaRepository.save(tarea);
         return mapper.toTareaResponseDto(guardada);
@@ -170,3 +171,4 @@ public class TareaService {
         tareaRepository.deleteById(id);
     }
 }
+

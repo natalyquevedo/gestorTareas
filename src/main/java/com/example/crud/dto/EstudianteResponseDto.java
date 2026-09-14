@@ -18,4 +18,8 @@ public class EstudianteResponseDto extends UsuarioResponseDto {
     private Integer semestre;
     private List<Long> asignaturasIds;
     private Integer totalTareas;
+
+    public Long getIdEstudiante() {
+        return getIdUsuario();
+    }
 }

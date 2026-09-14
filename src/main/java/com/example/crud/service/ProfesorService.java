@@ -72,7 +72,7 @@ public class ProfesorService {
                 .orElseThrow(() -> new RecursoNoEncontradoException("Asignatura no encontrada con el ID: " + idAsignatura));
 
         // Regla 2: Límite máximo de 4 asignaturas por profesor
-        if (profesor.getAsignaturas() != null && profesor.getAsignaturas().size() >= Profesor.MAX_ASIGNATURAS) {
+        if (asignatura.getProfesor() != null && asignatura.getProfesor().getIdUsuario().equals(idProfesor)) { throw new ReglaNegocioException("La asignatura ya se encuentra asignada a este docente."); } if (profesor.getAsignaturas() != null && profesor.getAsignaturas().size() >= Profesor.MAX_ASIGNATURAS) {
             throw new ReglaNegocioException("El profesor ya tiene el límite máximo de " + Profesor.MAX_ASIGNATURAS + " asignaturas asignadas.");
         }
 

@@ -1,16 +1,24 @@
 {
   "info": {
     "_postman_id": "9a123456-789a-bcde-f012-3456789abcde",
-    "name": "Gestor de Tareas - Spring Boot API",
-    "description": "Colección de pruebas completa para el Gestor de Tareas en Postman. Incluye flujo secuencial de pruebas CRUD, entrega y calificación de tareas.",
+    "name": "Gestor de Tareas - Spring Boot API (Estandarizado)",
+    "description": "Colección completa de pruebas REST para Gestor de Tareas ajustada según mejores prácticas de auditoría:\n1. Uso de variable global {{baseUrl}}.\n2. Estandarización de 'codigo' (eliminando la ambigüedad con 'id').\n3. Corrección de query params alineados con los controladores (@RequestParam idAsignatura, idEstudiante, nota).\n4. Inclusión del módulo completo de Coordinadores.\n5. Operaciones CRUD completas y casos de prueba de validación.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    }
+  ],
   "item": [
     {
-      "name": "1. Asignaturas",
+      "name": "1. Coordinadores",
+      "description": "Endpoints de administración académica y coordinación.",
       "item": [
         {
-          "name": "1.1 Crear Asignatura (POO)",
+          "name": "1.1 Registrar Coordinador",
           "request": {
             "method": "POST",
             "header": [
@@ -21,28 +29,97 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nombre\": \"Programación Orientada a Objetos\",\n  \"codigo\": \"SIS-301\"\n}"
+              "raw": "{\n  \"nombre\": \"Admin General Académico\",\n  \"documento\": \"99887766\",\n  \"correo\": \"coordinacion@universidad.edu.co\",\n  \"password\": \"admin123\"\n}"
             },
             "url": {
-              "raw": "http://localhost:8080/api/asignaturas",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
-              "path": ["api", "asignaturas"]
+              "raw": "{{baseUrl}}/api/coordinadores",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "coordinadores"
+              ]
             }
           }
         },
         {
-          "name": "1.2 Listar Asignaturas",
+          "name": "1.2 Listar Coordinadores",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/asignaturas",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
-              "path": ["api", "asignaturas"]
+              "raw": "{{baseUrl}}/api/coordinadores",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "coordinadores"
+              ]
+            }
+          }
+        },
+        {
+          "name": "1.3 Obtener Coordinador por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/coordinadores/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "coordinadores",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "1.4 Actualizar Coordinador",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Admin General Actualizado\",\n  \"documento\": \"99887766\",\n  \"correo\": \"admin.actualizado@universidad.edu.co\",\n  \"password\": \"nuevoAdmin456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/coordinadores/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "coordinadores",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "1.5 Eliminar Coordinador",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/coordinadores/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "coordinadores",
+                "1"
+              ]
             }
           }
         }
@@ -50,9 +127,10 @@
     },
     {
       "name": "2. Profesores",
+      "description": "Endpoints de docentes. El campo 'codigo' está estandarizado.",
       "item": [
         {
-          "name": "2.1 Registrar Profesor",
+          "name": "2.1 Registrar Profesor (con 'codigo')",
           "request": {
             "method": "POST",
             "header": [
@@ -63,14 +141,17 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"id\": \"DOC-2026\",\n  \"nombre\": \"Eva Patricia Vásquez\",\n  \"documento\": \"52112233\",\n  \"edad\": 40,\n  \"correo\": \"eva.vasquez@universidad.edu.co\",\n  \"password\": \"docente123\"\n}"
+              "raw": "{\n  \"codigo\": \"DOC-2026\",\n  \"nombre\": \"Eva Patricia Vásquez\",\n  \"documento\": \"52112233\",\n  \"edad\": 40,\n  \"correo\": \"eva.vasquez@universidad.edu.co\",\n  \"password\": \"docente123\"\n}"
             },
             "url": {
-              "raw": "http://localhost:8080/api/profesores",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
-              "path": ["api", "profesores"]
+              "raw": "{{baseUrl}}/api/profesores",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "profesores"
+              ]
             }
           }
         },
@@ -80,25 +161,70 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/profesores",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
-              "path": ["api", "profesores"]
+              "raw": "{{baseUrl}}/api/profesores",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "profesores"
+              ]
             }
           }
         },
         {
-          "name": "2.3 Asignar Materia a Profesor",
+          "name": "2.3 Obtener Profesor por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/profesores/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "profesores",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "2.4 Asignar Materia a Profesor",
           "request": {
             "method": "POST",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/profesores/1/asignar-materia/1",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
-              "path": ["api", "profesores", "1", "asignar-materia", "1"]
+              "raw": "{{baseUrl}}/api/profesores/1/asignar-materia/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "profesores",
+                "1",
+                "asignar-materia",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "2.5 Eliminar Profesor",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/profesores/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "profesores",
+                "1"
+              ]
             }
           }
         }
@@ -106,6 +232,7 @@
     },
     {
       "name": "3. Estudiantes",
+      "description": "Endpoints de registro académico y matrículas de estudiantes.",
       "item": [
         {
           "name": "3.1 Registrar Estudiante",
@@ -122,11 +249,14 @@
               "raw": "{\n  \"nombre\": \"Reichel Mariana Arias\",\n  \"documento\": \"1001223344\",\n  \"codigo\": \"20261001\",\n  \"edad\": 20,\n  \"semestre\": 3,\n  \"correo\": \"reichel.arias@universidad.edu.co\",\n  \"password\": \"estudiante123\"\n}"
             },
             "url": {
-              "raw": "http://localhost:8080/api/estudiantes",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
-              "path": ["api", "estudiantes"]
+              "raw": "{{baseUrl}}/api/estudiantes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "estudiantes"
+              ]
             }
           }
         },
@@ -136,35 +266,81 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/estudiantes",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
-              "path": ["api", "estudiantes"]
+              "raw": "{{baseUrl}}/api/estudiantes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "estudiantes"
+              ]
             }
           }
         },
         {
-          "name": "3.3 Inscribir Asignatura a Estudiante",
+          "name": "3.3 Obtener Estudiante por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/estudiantes/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "estudiantes",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "3.4 Inscribir Asignatura a Estudiante",
           "request": {
             "method": "POST",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/estudiantes/1/inscribir/1",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
-              "path": ["api", "estudiantes", "1", "inscribir", "1"]
+              "raw": "{{baseUrl}}/api/estudiantes/1/inscribir/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "estudiantes",
+                "1",
+                "inscribir",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "3.5 Eliminar Estudiante",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/estudiantes/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "estudiantes",
+                "1"
+              ]
             }
           }
         }
       ]
     },
     {
-      "name": "4. Tareas Academicas (Flujo Central)",
+      "name": "4. Asignaturas",
+      "description": "Endpoints de catálogo de materias y consulta de matriculados.",
       "item": [
         {
-          "name": "4.1 Crear Tarea Académica (Urgente < 24h)",
+          "name": "4.1 Crear Asignatura (POO)",
           "request": {
             "method": "POST",
             "header": [
@@ -175,92 +351,88 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"titulo\": \"Taller 1: Diagramas de Clases y POO\",\n  \"descripcion\": \"Construir el prototipo de arquitectura y capa model del proyecto.\",\n  \"fechaEntrega\": \"2026-09-07 14:00:00\",\n  \"prioridad\": \"ALTA\",\n  \"material\": \"https://campus.universidad.edu.co/materiales/taller1.pdf\"\n}"
+              "raw": "{\n  \"nombre\": \"Programación Orientada a Objetos\",\n  \"codigo\": \"SIS-301\"\n}"
             },
             "url": {
-              "raw": "http://localhost:8080/api/tareas?asignaturaId=1&profesorId=1&estudianteId=1",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
-              "path": ["api", "tareas"],
-              "query": [
-                { "key": "asignaturaId", "value": "1" },
-                { "key": "profesorId", "value": "1" },
-                { "key": "estudianteId", "value": "1" }
+              "raw": "{{baseUrl}}/api/asignaturas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "asignaturas"
               ]
             }
           }
         },
         {
-          "name": "4.2 Listar Todas las Tareas",
+          "name": "4.2 Listar Asignaturas",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/tareas",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
-              "path": ["api", "tareas"]
+              "raw": "{{baseUrl}}/api/asignaturas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "asignaturas"
+              ]
             }
           }
         },
         {
-          "name": "4.3 Consultar Tareas Urgentes (< 24h)",
+          "name": "4.3 Obtener Asignatura por ID",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/tareas/urgentes",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
-              "path": ["api", "tareas", "urgentes"]
+              "raw": "{{baseUrl}}/api/asignaturas/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "asignaturas",
+                "1"
+              ]
             }
           }
         },
         {
-          "name": "4.4 Filtrar Tareas por Estado (PENDIENTE)",
+          "name": "4.4 Consultar Estudiantes Matriculados",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/tareas/estado/PENDIENTE",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
-              "path": ["api", "tareas", "estado", "PENDIENTE"]
+              "raw": "{{baseUrl}}/api/asignaturas/1/estudiantes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "asignaturas",
+                "1",
+                "estudiantes"
+              ]
             }
           }
         },
         {
-          "name": "4.5 Estudiante Entrega la Tarea",
+          "name": "4.5 Eliminar Asignatura",
           "request": {
-            "method": "PUT",
+            "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/tareas/1/entregar",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
-              "path": ["api", "tareas", "1", "entregar"]
-            }
-          }
-        },
-        {
-          "name": "4.6 Profesor Califica la Tarea (Nota 4.8)",
-          "request": {
-            "method": "PUT",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:8080/api/tareas/1/calificar?nota=4.8&profesorId=1",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
-              "path": ["api", "tareas", "1", "calificar"],
-              "query": [
-                { "key": "nota", "value": "4.8" },
-                { "key": "profesorId", "value": "1" }
+              "raw": "{{baseUrl}}/api/asignaturas/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "asignaturas",
+                "1"
               ]
             }
           }
@@ -268,28 +440,11 @@
       ]
     },
     {
-      "name": "5. Pruebas de Errores y Validaciones (Casos Fallidos Esperados)",
+      "name": "5. Tareas Académicas",
+      "description": "Flujo de tareas: creación, entrega, urgencias y calificación.",
       "item": [
         {
-          "name": "5.1 Error al Calificar con Nota Inválida (ej: 6.0)",
-          "request": {
-            "method": "PUT",
-            "header": [],
-            "url": {
-              "raw": "http://localhost:8080/api/tareas/1/calificar?nota=6.0&profesorId=1",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
-              "path": ["api", "tareas", "1", "calificar"],
-              "query": [
-                { "key": "nota", "value": "6.0" },
-                { "key": "profesorId", "value": "1" }
-              ]
-            }
-          }
-        },
-        {
-          "name": "5.2 Error al Crear Tarea con Título Vacío (Validación)",
+          "name": "5.1 Crear Tarea Académica",
           "request": {
             "method": "POST",
             "header": [
@@ -300,35 +455,380 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"titulo\": \"\",\n  \"descripcion\": \"Sin titulo\",\n  \"fechaEntrega\": \"2026-09-08 10:00:00\"\n}"
+              "raw": "{\n  \"titulo\": \"Taller 1: Diagramas de Clases y POO\",\n  \"descripcion\": \"Construir el prototipo de arquitectura y capa model del proyecto.\",\n  \"fechaEntrega\": \"2026-09-12 18:00:00\",\n  \"prioridad\": \"ALTA\",\n  \"material\": \"https://campus.universidad.edu.co/materiales/taller1.pdf\"\n}"
             },
             "url": {
-              "raw": "http://localhost:8080/api/tareas?asignaturaId=1&profesorId=1&estudianteId=1",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
-              "path": ["api", "tareas"],
+              "raw": "{{baseUrl}}/api/tareas?idAsignatura=1&idEstudiante=1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tareas"
+              ],
               "query": [
-                { "key": "asignaturaId", "value": "1" },
-                { "key": "profesorId", "value": "1" },
-                { "key": "estudianteId", "value": "1" }
+                {
+                  "key": "idAsignatura",
+                  "value": "1",
+                  "description": "ID de la materia (alineado con @RequestParam idAsignatura)"
+                },
+                {
+                  "key": "idEstudiante",
+                  "value": "1",
+                  "description": "ID del alumno (alineado con @RequestParam idEstudiante)"
+                }
               ]
             }
           }
         },
         {
-          "name": "5.3 Error 404 al Buscar Recurso Inexistente",
+          "name": "5.2 Listar Todas las Tareas",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/tareas/9999",
-              "protocol": "http",
-              "host": ["localhost"],
-              "port": "8080",
-              "path": ["api", "tareas", "9999"]
+              "raw": "{{baseUrl}}/api/tareas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tareas"
+              ]
             }
           }
+        },
+        {
+          "name": "5.3 Obtener Tarea por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tareas/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tareas",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "5.4 Consultar Tareas Urgentes (< 24h)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tareas/urgentes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tareas",
+                "urgentes"
+              ]
+            }
+          }
+        },
+        {
+          "name": "5.5 Filtrar Tareas por Estado (PENDIENTE)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tareas/estado/PENDIENTE",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tareas",
+                "estado",
+                "PENDIENTE"
+              ]
+            }
+          }
+        },
+        {
+          "name": "5.6 Estudiante Entrega la Tarea",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tareas/1/entregar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tareas",
+                "1",
+                "entregar"
+              ]
+            }
+          }
+        },
+        {
+          "name": "5.7 Profesor Califica la Tarea (Nota 4.8)",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tareas/1/calificar?nota=4.8",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tareas",
+                "1",
+                "calificar"
+              ],
+              "query": [
+                {
+                  "key": "nota",
+                  "value": "4.8",
+                  "description": "Nota válida entre 0.0 y 5.0 (alineado con @RequestParam Double nota)"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "5.8 Eliminar Tarea",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tareas/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tareas",
+                "1"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Pruebas de Validación y Errores (Casos Fallidos Esperados)",
+      "description": "Casos de borde para validar los códigos HTTP 400 y 404.",
+      "item": [
+        {
+          "name": "6.1 Error al Calificar con Nota Fuera de Rango (ej: 6.0)",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tareas/1/calificar?nota=6.0",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tareas",
+                "1",
+                "calificar"
+              ],
+              "query": [
+                {
+                  "key": "nota",
+                  "value": "6.0"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "6.2 Error al Crear Tarea con Título Vacío (Validación @NotBlank)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"\",\n  \"descripcion\": \"Sin titulo\",\n  \"fechaEntrega\": \"2026-09-15 10:00:00\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tareas?idAsignatura=1&idEstudiante=1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tareas"
+              ],
+              "query": [
+                {
+                  "key": "idAsignatura",
+                  "value": "1"
+                },
+                {
+                  "key": "idEstudiante",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "6.3 Error al Registrar Estudiante con Datos Inválidos",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"A\",\n  \"documento\": \"12\",\n  \"codigo\": \"1\",\n  \"edad\": 10,\n  \"semestre\": 15,\n  \"correo\": \"correo-invalido\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/estudiantes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "estudiantes"
+              ]
+            }
+          }
+        },
+        {
+          "name": "6.4 Error 404/500 al Buscar Tarea Inexistente",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tareas/9999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tareas",
+                "9999"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Autenticación y Usuarios",
+      "description": "Endpoints de autenticación (login/register) y consulta general de usuarios.",
+      "item": [
+        {
+          "name": "7.1 Iniciar Sesión (Login Docente)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\\n  \"correo\": \"eva.vasquez@universidad.edu.co\",\\n  \"password\": \"password123\"\\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Valida credenciales y genera token de sesión para el usuario."
+          },
+          "response": []
+        },
+        {
+          "name": "7.2 Registrar Nuevo Estudiante (Vía Auth)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\\n  \"nombre\": \"Carlos Andrés Mendoza\",\\n  \"documento\": \"1098765999\",\\n  \"codigo\": \"EST-2027\",\\n  \"correo\": \"carlos.mendoza@universidad.edu.co\",\\n  \"password\": \"password123\",\\n  \"rol\": \"ESTUDIANTE\",\\n  \"edad\": 21,\\n  \"semestre\": 4\\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            },
+            "description": "Registra un nuevo usuario con rol en el sistema mediante el módulo Auth."
+          },
+          "response": []
+        },
+        {
+          "name": "7.3 Listar Todos los Usuarios del Sistema",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "usuarios"
+              ]
+            },
+            "description": "Consulta la tabla general de usuarios (coordinadores, profesores, estudiantes)."
+          },
+          "response": []
+        },
+        {
+          "name": "7.4 Obtener Usuario por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "usuarios",
+                "1"
+              ]
+            },
+            "description": "Obtiene los datos base del usuario por su identificador único."
+          },
+          "response": []
         }
       ]
     }
