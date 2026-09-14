@@ -68,11 +68,27 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> manejarIntegridadDatos(
             DataIntegrityViolationException ex,
             HttpServletRequest request) {
+        String detalle = "Conflicto de integridad referencial o registro duplicado.";
+        if (ex.getMostSpecificCause() != null && ex.getMostSpecificCause().getMessage() != null) {
+            String msg = ex.getMostSpecificCause().getMessage().toLowerCase();
+            if (msg.contains("documento")) {
+                detalle = "Ya existe un usuario con ese documento de identidad.";
+            } else if (msg.contains("correo")) {
+                detalle = "Ya existe un usuario con ese correo electrónico.";
+            } else if (msg.contains("codigo")) {
+                detalle = "Ya existe un usuario con ese código institucional.";
+            } else if (msg.contains("nombre")) {
+                detalle = "Ya existe un registro con ese nombre.";
+            } else if (msg.contains("foreign key") || msg.contains("clave foránea") || msg.contains("is still referenced")) {
+                detalle = "No es posible completar la operación porque el registro tiene datos asociados.";
+            }
+        }
+
         ErrorResponse error = ErrorResponse.builder()
                 .timestamp(LocalDateTime.now())
                 .status(HttpStatus.CONFLICT.value())
                 .error("Conflicto de Integridad Referencial")
-                .message("No es posible completar la operación debido a restricciones de integridad (registro duplicado o con registros asociados).")
+                .message(detalle)
                 .path(request.getRequestURI())
                 .build();
         return new ResponseEntity<>(error, HttpStatus.CONFLICT);
