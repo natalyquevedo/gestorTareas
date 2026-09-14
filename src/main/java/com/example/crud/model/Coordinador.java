@@ -1,49 +1,35 @@
 package com.example.crud.model;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.persistence.Entity;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PrimaryKeyJoinColumn;
+import jakarta.persistence.Table;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
-/**
- * Entidad Coordinador según el diseño del sistema y roles de acceso.
- * Implementa la interfaz Usuario y representa la administración académica.
- */
 @Entity
 @Table(name = "coordinadores")
+@PrimaryKeyJoinColumn(name = "id_usuario")
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
-@ToString(exclude = {"password"})
-@EqualsAndHashCode(of = "idCoordinador")
-public class Coordinador {
+@SuperBuilder
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
+public class Coordinador extends Usuario {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_coordinador")
-    private Long idCoordinador;
+    @PrePersist
+    public void asignarRolPorDefecto() {
+        if (getRol() == null || getRol().isBlank()) {
+            setRol("COORDINADOR");
+        }
+    }
 
-    @NotBlank(message = "El nombre del coordinador es obligatorio")
-    @Size(min = 3, max = 100, message = "El nombre debe tener entre 3 y 100 caracteres")
-    @Column(nullable = false, length = 100)
-    private String nombre;
+    public Long getIdCoordinador() {
+        return getIdUsuario();
+    }
 
-    @NotBlank(message = "El documento de identidad es obligatorio")
-    @Size(min = 5, max = 20, message = "El documento debe tener entre 5 y 20 caracteres")
-    @Column(nullable = false, length = 20, unique = true)
-    private String documento;
-
-    @Email(message = "El correo electrónico debe tener un formato válido")
-    @Column(length = 120, unique = true)
-    private String correo;
-
-    @Column(length = 255)
-    private String password;
-
-    @Builder.Default
-    @Column(nullable = false, length = 20)
-    private String rol = "COORDINADOR";
+    public void setIdCoordinador(Long idCoordinador) {
+        setIdUsuario(idCoordinador);
+    }
 }

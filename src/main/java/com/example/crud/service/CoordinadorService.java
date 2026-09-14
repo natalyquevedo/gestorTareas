@@ -1,5 +1,9 @@
 package com.example.crud.service;
 
+import com.example.crud.dto.CoordinadorRequestDto;
+import com.example.crud.dto.CoordinadorResponseDto;
+import com.example.crud.dto.mapper.ModelDtoMapper;
+import com.example.crud.exception.RecursoNoEncontradoException;
 import com.example.crud.model.Coordinador;
 import com.example.crud.repository.CoordinadorRepository;
 import lombok.RequiredArgsConstructor;
@@ -7,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -14,39 +19,51 @@ import java.util.List;
 public class CoordinadorService {
 
     private final CoordinadorRepository coordinadorRepository;
+    private final ModelDtoMapper mapper;
 
     @Transactional(readOnly = true)
-    public List<Coordinador> listarTodos() {
-        return coordinadorRepository.findAll();
+    public List<CoordinadorResponseDto> listarTodos() {
+        return coordinadorRepository.findAll().stream()
+                .map(mapper::toCoordinadorResponseDto)
+                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
-    public Coordinador obtenerPorId(Long id) {
+    public CoordinadorResponseDto obtenerPorId(Long id) {
+        return mapper.toCoordinadorResponseDto(buscarEntidadPorId(id));
+    }
+
+    @Transactional(readOnly = true)
+    public Coordinador buscarEntidadPorId(Long id) {
         return coordinadorRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Coordinador no encontrado con el ID: " + id));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Coordinador no encontrado con el ID: " + id));
     }
 
-    public Coordinador guardar(Coordinador coordinador) {
-        return coordinadorRepository.save(coordinador);
+    public CoordinadorResponseDto guardar(CoordinadorRequestDto dto) {
+        Coordinador coordinador = mapper.toEntity(dto);
+        Coordinador guardado = coordinadorRepository.save(coordinador);
+        return mapper.toCoordinadorResponseDto(guardado);
     }
 
-    public Coordinador actualizar(Long id, Coordinador coordinadorDetalles) {
-        Coordinador coordinadorExistente = obtenerPorId(id);
+    public CoordinadorResponseDto actualizar(Long id, CoordinadorRequestDto dto) {
+        Coordinador existente = buscarEntidadPorId(id);
 
-        coordinadorExistente.setNombre(coordinadorDetalles.getNombre());
-        coordinadorExistente.setDocumento(coordinadorDetalles.getDocumento());
-        coordinadorExistente.setCorreo(coordinadorDetalles.getCorreo());
+        existente.setNombre(dto.getNombre());
+        existente.setDocumento(dto.getDocumento());
+        existente.setCodigo(dto.getCodigo());
+        existente.setCorreo(dto.getCorreo());
 
-        if (coordinadorDetalles.getPassword() != null && !coordinadorDetalles.getPassword().isBlank()) {
-            coordinadorExistente.setPassword(coordinadorDetalles.getPassword());
+        if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
+            existente.setPassword(dto.getPassword());
         }
 
-        return coordinadorRepository.save(coordinadorExistente);
+        Coordinador actualizado = coordinadorRepository.save(existente);
+        return mapper.toCoordinadorResponseDto(actualizado);
     }
 
     public void eliminar(Long id) {
         if (!coordinadorRepository.existsById(id)) {
-            throw new RuntimeException("Coordinador no existe con el ID: " + id);
+            throw new RecursoNoEncontradoException("Coordinador no existe con el ID: " + id);
         }
         coordinadorRepository.deleteById(id);
     }

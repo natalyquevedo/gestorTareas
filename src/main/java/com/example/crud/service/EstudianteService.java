@@ -1,5 +1,10 @@
 package com.example.crud.service;
 
+import com.example.crud.dto.EstudianteRequestDto;
+import com.example.crud.dto.EstudianteResponseDto;
+import com.example.crud.dto.mapper.ModelDtoMapper;
+import com.example.crud.exception.RecursoNoEncontradoException;
+import com.example.crud.exception.ReglaNegocioException;
 import com.example.crud.model.Asignatura;
 import com.example.crud.model.Estudiante;
 import com.example.crud.repository.AsignaturaRepository;
@@ -9,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -17,42 +23,73 @@ public class EstudianteService {
 
     private final EstudianteRepository estudianteRepository;
     private final AsignaturaRepository asignaturaRepository;
+    private final ModelDtoMapper mapper;
 
     @Transactional(readOnly = true)
-    public List<Estudiante> listarTodos() {
-        return estudianteRepository.findAll();
+    public List<EstudianteResponseDto> listarTodos() {
+        return estudianteRepository.findAll().stream()
+                .map(mapper::toEstudianteResponseDto)
+                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
-    public Estudiante obtenerPorId(Long id) {
+    public EstudianteResponseDto obtenerPorId(Long id) {
+        return mapper.toEstudianteResponseDto(buscarEntidadPorId(id));
+    }
+
+    @Transactional(readOnly = true)
+    public Estudiante buscarEntidadPorId(Long id) {
         return estudianteRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Estudiante no encontrado con el ID: " + id));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Estudiante no encontrado con el ID: " + id));
     }
 
-    public Estudiante guardar(Estudiante estudiante) {
-        return estudianteRepository.save(estudiante);
+    public EstudianteResponseDto guardar(EstudianteRequestDto dto) {
+        Estudiante estudiante = mapper.toEntity(dto);
+        Estudiante guardado = estudianteRepository.save(estudiante);
+        return mapper.toEstudianteResponseDto(guardado);
     }
 
-    public Estudiante inscribirAsignatura(Long idEstudiante, Long idAsignatura) {
-        Estudiante estudiante = obtenerPorId(idEstudiante);
-        Asignatura asignatura = asignaturaRepository.findById(idAsignatura)
-                .orElseThrow(() -> new RuntimeException("Asignatura no encontrada con el ID: " + idAsignatura));
+    public EstudianteResponseDto actualizar(Long id, EstudianteRequestDto dto) {
+        Estudiante existente = buscarEntidadPorId(id);
 
-        if (estudiante.getAsignaturas() != null && estudiante.getAsignaturas().size() >= 8) {
-            throw new RuntimeException("El estudiante no puede matricular más de 8 asignaturas.");
+        existente.setNombre(dto.getNombre());
+        existente.setDocumento(dto.getDocumento());
+        existente.setCodigo(dto.getCodigo());
+        existente.setEdad(dto.getEdad());
+        existente.setSemestre(dto.getSemestre());
+        existente.setCorreo(dto.getCorreo());
+
+        if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
+            existente.setPassword(dto.getPassword());
         }
 
-        if (asignatura.getEstudiantes() != null && asignatura.getEstudiantes().size() >= 25) {
-            throw new RuntimeException("La asignatura ya alcanzó el límite máximo de 25 estudiantes.");
+        Estudiante actualizado = estudianteRepository.save(existente);
+        return mapper.toEstudianteResponseDto(actualizado);
+    }
+
+    public EstudianteResponseDto inscribirAsignatura(Long idEstudiante, Long idAsignatura) {
+        Estudiante estudiante = buscarEntidadPorId(idEstudiante);
+        Asignatura asignatura = asignaturaRepository.findById(idAsignatura)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Asignatura no encontrada con el ID: " + idAsignatura));
+
+        // Regla 4: Máximo 8 asignaturas por estudiante
+        if (estudiante.getAsignaturas() != null && estudiante.getAsignaturas().size() >= Estudiante.MAX_ASIGNATURAS) {
+            throw new ReglaNegocioException("El estudiante no puede matricular más de " + Estudiante.MAX_ASIGNATURAS + " asignaturas.");
+        }
+
+        // Regla 3: Máximo 25 estudiantes por asignatura
+        if (asignatura.getEstudiantes() != null && asignatura.getEstudiantes().size() >= Asignatura.MAX_ESTUDIANTES) {
+            throw new ReglaNegocioException("La asignatura ya alcanzó el límite máximo de " + Asignatura.MAX_ESTUDIANTES + " estudiantes.");
         }
 
         estudiante.getAsignaturas().add(asignatura);
-        return estudianteRepository.save(estudiante);
+        Estudiante guardado = estudianteRepository.save(estudiante);
+        return mapper.toEstudianteResponseDto(guardado);
     }
 
     public void eliminar(Long id) {
         if (!estudianteRepository.existsById(id)) {
-            throw new RuntimeException("Estudiante no existe con el ID: " + id);
+            throw new RecursoNoEncontradoException("Estudiante no existe con el ID: " + id);
         }
         estudianteRepository.deleteById(id);
     }

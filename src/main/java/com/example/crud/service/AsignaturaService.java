@@ -1,13 +1,21 @@
 package com.example.crud.service;
 
+import com.example.crud.dto.AsignaturaRequestDto;
+import com.example.crud.dto.AsignaturaResponseDto;
+import com.example.crud.dto.EstudianteResponseDto;
+import com.example.crud.dto.mapper.ModelDtoMapper;
+import com.example.crud.exception.RecursoNoEncontradoException;
 import com.example.crud.model.Asignatura;
-import com.example.crud.model.Estudiante;
+import com.example.crud.model.Profesor;
 import com.example.crud.repository.AsignaturaRepository;
+import com.example.crud.repository.ProfesorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -15,31 +23,67 @@ import java.util.List;
 public class AsignaturaService {
 
     private final AsignaturaRepository asignaturaRepository;
+    private final ProfesorRepository profesorRepository;
+    private final ModelDtoMapper mapper;
 
     @Transactional(readOnly = true)
-    public List<Asignatura> listarTodas() {
-        return asignaturaRepository.findAll();
+    public List<AsignaturaResponseDto> listarTodas() {
+        return asignaturaRepository.findAll().stream()
+                .map(mapper::toAsignaturaResponseDto)
+                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
-    public Asignatura obtenerPorId(Long id) {
+    public AsignaturaResponseDto obtenerPorId(Long id) {
+        return mapper.toAsignaturaResponseDto(buscarEntidadPorId(id));
+    }
+
+    @Transactional(readOnly = true)
+    public Asignatura buscarEntidadPorId(Long id) {
         return asignaturaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Asignatura no encontrada con el ID: " + id));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Asignatura no encontrada con el ID: " + id));
     }
 
-    public Asignatura guardar(Asignatura asignatura) {
-        return asignaturaRepository.save(asignatura);
+    public AsignaturaResponseDto guardar(AsignaturaRequestDto dto) {
+        Asignatura asignatura = mapper.toEntity(dto);
+        if (dto.getProfesorId() != null) {
+            Profesor profesor = profesorRepository.findById(dto.getProfesorId())
+                    .orElseThrow(() -> new RecursoNoEncontradoException("Profesor no encontrado con el ID: " + dto.getProfesorId()));
+            asignatura.setProfesor(profesor);
+        }
+        Asignatura guardada = asignaturaRepository.save(asignatura);
+        return mapper.toAsignaturaResponseDto(guardada);
+    }
+
+    public AsignaturaResponseDto actualizar(Long id, AsignaturaRequestDto dto) {
+        Asignatura existente = buscarEntidadPorId(id);
+        existente.setNombre(dto.getNombre());
+        if (dto.getCodigo() != null) {
+            existente.setCodigo(dto.getCodigo());
+        }
+        if (dto.getProfesorId() != null) {
+            Profesor profesor = profesorRepository.findById(dto.getProfesorId())
+                    .orElseThrow(() -> new RecursoNoEncontradoException("Profesor no encontrado con el ID: " + dto.getProfesorId()));
+            existente.setProfesor(profesor);
+        }
+        Asignatura actualizada = asignaturaRepository.save(existente);
+        return mapper.toAsignaturaResponseDto(actualizada);
     }
 
     @Transactional(readOnly = true)
-    public List<Estudiante> obtenerEstudiantesDeAsignatura(Long idAsignatura) {
-        Asignatura asignatura = obtenerPorId(idAsignatura);
-        return asignatura.getEstudiantes();
+    public List<EstudianteResponseDto> obtenerEstudiantesDeAsignatura(Long idAsignatura) {
+        Asignatura asignatura = buscarEntidadPorId(idAsignatura);
+        if (asignatura.getEstudiantes() == null) {
+            return Collections.emptyList();
+        }
+        return asignatura.getEstudiantes().stream()
+                .map(mapper::toEstudianteResponseDto)
+                .collect(Collectors.toList());
     }
 
     public void eliminar(Long id) {
         if (!asignaturaRepository.existsById(id)) {
-            throw new RuntimeException("Asignatura no existe con el ID: " + id);
+            throw new RecursoNoEncontradoException("Asignatura no existe con el ID: " + id);
         }
         asignaturaRepository.deleteById(id);
     }

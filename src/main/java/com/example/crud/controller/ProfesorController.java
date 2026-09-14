@@ -1,6 +1,7 @@
 package com.example.crud.controller;
 
-import com.example.crud.model.Profesor;
+import com.example.crud.dto.ProfesorRequestDto;
+import com.example.crud.dto.ProfesorResponseDto;
 import com.example.crud.service.ProfesorService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,26 +19,34 @@ public class ProfesorController {
     private final ProfesorService profesorService;
 
     @GetMapping
-    public ResponseEntity<List<Profesor>> listarTodos() {
+    public ResponseEntity<List<ProfesorResponseDto>> listarTodos() {
         return ResponseEntity.ok(profesorService.listarTodos());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Profesor> obtenerPorId(@PathVariable Long id) {
+    public ResponseEntity<ProfesorResponseDto> obtenerPorId(@PathVariable Long id) {
         return ResponseEntity.ok(profesorService.obtenerPorId(id));
     }
 
     @PostMapping
-    public ResponseEntity<Profesor> registrar(@Valid @RequestBody Profesor profesor) {
-        Profesor nuevoProfesor = profesorService.guardar(profesor);
-        return new ResponseEntity<>(nuevoProfesor, HttpStatus.CREATED);
+    public ResponseEntity<ProfesorResponseDto> registrar(@Valid @RequestBody ProfesorRequestDto profesorDto) {
+        ProfesorResponseDto nuevo = profesorService.guardar(profesorDto);
+        return new ResponseEntity<>(nuevo, HttpStatus.CREATED);
     }
 
     @PostMapping("/{idProfesor}/asignar-materia/{idAsignatura}")
-    public ResponseEntity<Profesor> asignarAsignatura(
+    public ResponseEntity<ProfesorResponseDto> asignarAsignatura(
             @PathVariable Long idProfesor,
             @PathVariable Long idAsignatura) {
-        Profesor actualizado = profesorService.asignarAsignatura(idProfesor, idAsignatura);
+        ProfesorResponseDto actualizado = profesorService.asignarAsignatura(idProfesor, idAsignatura);
+        return ResponseEntity.ok(actualizado);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ProfesorResponseDto> actualizar(
+            @PathVariable Long id,
+            @Valid @RequestBody ProfesorRequestDto profesorDto) {
+        ProfesorResponseDto actualizado = profesorService.actualizar(id, profesorDto);
         return ResponseEntity.ok(actualizado);
     }
 

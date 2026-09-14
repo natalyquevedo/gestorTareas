@@ -1,6 +1,7 @@
 package com.example.crud.controller;
 
-import com.example.crud.model.Coordinador;
+import com.example.crud.dto.CoordinadorRequestDto;
+import com.example.crud.dto.CoordinadorResponseDto;
 import com.example.crud.service.CoordinadorService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,26 +19,26 @@ public class CoordinadorController {
     private final CoordinadorService coordinadorService;
 
     @GetMapping
-    public ResponseEntity<List<Coordinador>> listarTodos() {
+    public ResponseEntity<List<CoordinadorResponseDto>> listarTodos() {
         return ResponseEntity.ok(coordinadorService.listarTodos());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Coordinador> obtenerPorId(@PathVariable Long id) {
+    public ResponseEntity<CoordinadorResponseDto> obtenerPorId(@PathVariable Long id) {
         return ResponseEntity.ok(coordinadorService.obtenerPorId(id));
     }
 
     @PostMapping
-    public ResponseEntity<Coordinador> registrar(@Valid @RequestBody Coordinador coordinador) {
-        Coordinador nuevoCoordinador = coordinadorService.guardar(coordinador);
-        return new ResponseEntity<>(nuevoCoordinador, HttpStatus.CREATED);
+    public ResponseEntity<CoordinadorResponseDto> registrar(@Valid @RequestBody CoordinadorRequestDto coordinadorDto) {
+        CoordinadorResponseDto nuevo = coordinadorService.guardar(coordinadorDto);
+        return new ResponseEntity<>(nuevo, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Coordinador> actualizar(
+    public ResponseEntity<CoordinadorResponseDto> actualizar(
             @PathVariable Long id,
-            @Valid @RequestBody Coordinador coordinador) {
-        Coordinador actualizado = coordinadorService.actualizar(id, coordinador);
+            @Valid @RequestBody CoordinadorRequestDto coordinadorDto) {
+        CoordinadorResponseDto actualizado = coordinadorService.actualizar(id, coordinadorDto);
         return ResponseEntity.ok(actualizado);
     }
 

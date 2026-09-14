@@ -1,6 +1,7 @@
 package com.example.crud.controller;
 
-import com.example.crud.model.Estudiante;
+import com.example.crud.dto.EstudianteRequestDto;
+import com.example.crud.dto.EstudianteResponseDto;
 import com.example.crud.service.EstudianteService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,26 +19,34 @@ public class EstudianteController {
     private final EstudianteService estudianteService;
 
     @GetMapping
-    public ResponseEntity<List<Estudiante>> listarTodos() {
+    public ResponseEntity<List<EstudianteResponseDto>> listarTodos() {
         return ResponseEntity.ok(estudianteService.listarTodos());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Estudiante> obtenerPorId(@PathVariable Long id) {
+    public ResponseEntity<EstudianteResponseDto> obtenerPorId(@PathVariable Long id) {
         return ResponseEntity.ok(estudianteService.obtenerPorId(id));
     }
 
     @PostMapping
-    public ResponseEntity<Estudiante> registrar(@Valid @RequestBody Estudiante estudiante) {
-        Estudiante nuevoEstudiante = estudianteService.guardar(estudiante);
-        return new ResponseEntity<>(nuevoEstudiante, HttpStatus.CREATED);
+    public ResponseEntity<EstudianteResponseDto> registrar(@Valid @RequestBody EstudianteRequestDto estudianteDto) {
+        EstudianteResponseDto nuevo = estudianteService.guardar(estudianteDto);
+        return new ResponseEntity<>(nuevo, HttpStatus.CREATED);
     }
 
     @PostMapping("/{idEstudiante}/inscribir/{idAsignatura}")
-    public ResponseEntity<Estudiante> inscribirAsignatura(
+    public ResponseEntity<EstudianteResponseDto> inscribirAsignatura(
             @PathVariable Long idEstudiante,
             @PathVariable Long idAsignatura) {
-        Estudiante actualizado = estudianteService.inscribirAsignatura(idEstudiante, idAsignatura);
+        EstudianteResponseDto actualizado = estudianteService.inscribirAsignatura(idEstudiante, idAsignatura);
+        return ResponseEntity.ok(actualizado);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<EstudianteResponseDto> actualizar(
+            @PathVariable Long id,
+            @Valid @RequestBody EstudianteRequestDto estudianteDto) {
+        EstudianteResponseDto actualizado = estudianteService.actualizar(id, estudianteDto);
         return ResponseEntity.ok(actualizado);
     }
 
