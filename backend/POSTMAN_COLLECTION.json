@@ -1,0 +1,1127 @@
+{
+  "info": {
+    "_postman_id": "9a123456-789a-bcde-f012-3456789abcde",
+    "name": "Gestor de Semilleros de Investigación - Spring Boot API",
+    "description": "Colección completa de pruebas REST para el Sistema de Semilleros de Investigación Universitaria.\n\nPrincipales características:\n1. Enfoque directo a semilleros (sin asignaturas tradicionales).\n2. Regla de 1 Semillero por Profesor Tutor y 1 Semillero por Estudiante (Semillerista).\n3. Vistas directas del semillero para estudiante (/api/semilleros/estudiante/{id}) y profesor (/api/semilleros/tutor/{id}).\n4. Vista global para el Coordinador (/api/semilleros).\n5. Ciclo de vida de actividades: PENDIENTE -> ENTREGADA -> CALIFICADA (con observaciones cualitativas y calificación).\n6. Sin límites artificiales de tareas (permite planificar entregables de todo el semestre desde el día 1).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Autenticación y Usuarios",
+      "description": "Endpoints de autenticación y consulta general de usuarios.",
+      "item": [
+        {
+          "name": "1.1 Iniciar Sesión (Login)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"correo\": \"eva.vasquez@universidad.edu.co\",\n  \"password\": \"docente123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          }
+        },
+        {
+          "name": "1.2 Registrar Nuevo Estudiante (Auth)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Carlos Andrés Mendoza\",\n  \"documento\": \"1098765999\",\n  \"codigo\": \"EST-2027\",\n  \"correo\": \"carlos.mendoza@universidad.edu.co\",\n  \"password\": \"password123\",\n  \"rol\": \"ESTUDIANTE\",\n  \"edad\": 21,\n  \"semestre\": 4\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            }
+          }
+        },
+        {
+          "name": "1.3 Listar Todos los Usuarios",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "usuarios"
+              ]
+            }
+          }
+        },
+        {
+          "name": "1.4 Obtener Usuario por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/usuarios/{{idEstudiante}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "usuarios",
+                "{{idEstudiante}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Coordinadores",
+      "description": "Endpoints de coordinación universitaria (supervisan todos los semilleros).",
+      "item": [
+        {
+          "name": "2.1 Registrar Coordinador",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Admin Coordinación Investigaciones\",\n  \"documento\": \"99887766\",\n  \"correo\": \"coordinacion.investigacion@universidad.edu.co\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/coordinadores",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "coordinadores"
+              ]
+            }
+          }
+        },
+        {
+          "name": "2.2 Listar Coordinadores",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/coordinadores",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "coordinadores"
+              ]
+            }
+          }
+        },
+        {
+          "name": "2.3 Obtener Coordinador por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/coordinadores/{{idCoordinador}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "coordinadores",
+                "{{idCoordinador}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "2.4 Actualizar Coordinador",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Admin Coordinación General Actualizado\",\n  \"documento\": \"99887766\",\n  \"correo\": \"coordinacion.actualizada@universidad.edu.co\",\n  \"password\": \"admin456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/coordinadores/{{idCoordinador}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "coordinadores",
+                "{{idCoordinador}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "2.5 Eliminar Coordinador",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/coordinadores/{{idCoordinador}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "coordinadores",
+                "{{idCoordinador}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Profesores (Tutores)",
+      "description": "Endpoints de docentes tutores (máximo 1 semillero por profesor).",
+      "item": [
+        {
+          "name": "3.1 Registrar Profesor Tutor",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"codigo\": \"DOC-2026\",\n  \"nombre\": \"Dra. Eva Patricia Vásquez\",\n  \"documento\": \"52112233\",\n  \"edad\": 40,\n  \"correo\": \"eva.vasquez@universidad.edu.co\",\n  \"password\": \"docente123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/profesores",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "profesores"
+              ]
+            }
+          }
+        },
+        {
+          "name": "3.2 Listar Profesores",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/profesores",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "profesores"
+              ]
+            }
+          }
+        },
+        {
+          "name": "3.3 Obtener Profesor por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/profesores/{{idProfesor}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "profesores",
+                "{{idProfesor}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "3.4 Asignar Semillero a Profesor Tutor",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/profesores/{{idProfesor}}/asignar-semillero/{{idSemillero}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "profesores",
+                "{{idProfesor}}",
+                "asignar-semillero",
+                "{{idSemillero}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "3.5 Actualizar Profesor",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"codigo\": \"DOC-2026\",\n  \"nombre\": \"Dra. Eva Patricia Vásquez Ph.D.\",\n  \"documento\": \"52112233\",\n  \"edad\": 41,\n  \"correo\": \"eva.vasquez@universidad.edu.co\",\n  \"password\": \"docente123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/profesores/{{idProfesor}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "profesores",
+                "{{idProfesor}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "3.6 Eliminar Profesor",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/profesores/{{idProfesor}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "profesores",
+                "{{idProfesor}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Estudiantes (Semilleristas)",
+      "description": "Endpoints de semilleristas (máximo 1 semillero por estudiante).",
+      "item": [
+        {
+          "name": "4.1 Registrar Semillerista",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Reichel Mariana Arias\",\n  \"documento\": \"1001223344\",\n  \"codigo\": \"20261001\",\n  \"edad\": 20,\n  \"semestre\": 4,\n  \"correo\": \"reichel.arias@universidad.edu.co\",\n  \"password\": \"estudiante123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/estudiantes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "estudiantes"
+              ]
+            }
+          }
+        },
+        {
+          "name": "4.2 Listar Estudiantes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/estudiantes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "estudiantes"
+              ]
+            }
+          }
+        },
+        {
+          "name": "4.3 Obtener Estudiante por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/estudiantes/{{idEstudiante}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "estudiantes",
+                "{{idEstudiante}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "4.4 Inscribir Estudiante a Semillero",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/estudiantes/{{idEstudiante}}/inscribir-semillero/{{idSemillero}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "estudiantes",
+                "{{idEstudiante}}",
+                "inscribir-semillero",
+                "{{idSemillero}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "4.5 Desvincular Estudiante de Semillero",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/estudiantes/{{idEstudiante}}/desvincular-semillero/{{idSemillero}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "estudiantes",
+                "{{idEstudiante}}",
+                "desvincular-semillero",
+                "{{idSemillero}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "4.6 Actualizar Estudiante",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Reichel Mariana Arias Actualizada\",\n  \"documento\": \"1001223344\",\n  \"codigo\": \"20261001\",\n  \"edad\": 21,\n  \"semestre\": 5,\n  \"correo\": \"reichel.arias@universidad.edu.co\",\n  \"password\": \"estudiante123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/estudiantes/{{idEstudiante}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "estudiantes",
+                "{{idEstudiante}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "4.7 Eliminar Estudiante",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/estudiantes/{{idEstudiante}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "estudiantes",
+                "{{idEstudiante}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Semilleros de Investigación",
+      "description": "Endpoints de semilleros y vistas especializadas para Coordinador, Tutor y Estudiante.",
+      "item": [
+        {
+          "name": "5.1 Crear Semillero (con Tutor Asignado)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Semillero de Inteligencia Artificial y Robótica (SIAR)\",\n  \"codigo\": \"SIAR-2026\",\n  \"lineaInvestigacion\": \"Machine Learning, Visión por Computador y Robótica Móvil\",\n  \"descripcion\": \"Espacio formativo para investigación en pregrado enfocado en modelos de visión artificial y sistemas ciberfísicos.\",\n  \"profesorId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/semilleros",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "semilleros"
+              ]
+            }
+          }
+        },
+        {
+          "name": "5.2 Listar Todos los Semilleros (Vista Coordinador)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/semilleros",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "semilleros"
+              ]
+            },
+            "description": "Permite al Coordinador ver todos los semilleros con sus tutores, estudiantes y tareas."
+          }
+        },
+        {
+          "name": "5.3 Obtener Semillero por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/semilleros/{{idSemillero}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "semilleros",
+                "{{idSemillero}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "5.4 Vista Directa del Semillero para el Tutor",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/semilleros/tutor/{{idProfesor}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "semilleros",
+                "tutor",
+                "{{idProfesor}}"
+              ]
+            },
+            "description": "Retorna directamente el único semillero del tutor con sus semilleristas y tareas."
+          }
+        },
+        {
+          "name": "5.5 Vista Directa del Semillero para el Estudiante",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/semilleros/estudiante/{{idEstudiante}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "semilleros",
+                "estudiante",
+                "{{idEstudiante}}"
+              ]
+            },
+            "description": "Retorna directamente el semillero al que pertenece el semillerista sin navegar materias."
+          }
+        },
+        {
+          "name": "5.6 Inscribir Semillerista (desde Semillero)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/semilleros/{{idSemillero}}/inscribir/{{idEstudiante}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "semilleros",
+                "{{idSemillero}}",
+                "inscribir",
+                "{{idEstudiante}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "5.7 Asignar o Cambiar Tutor del Semillero",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/semilleros/{{idSemillero}}/asignar-tutor/{{idProfesor}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "semilleros",
+                "{{idSemillero}}",
+                "asignar-tutor",
+                "{{idProfesor}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "5.8 Desvincular Semillerista (desde Semillero)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/semilleros/{{idSemillero}}/desvincular/{{idEstudiante}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "semilleros",
+                "{{idSemillero}}",
+                "desvincular",
+                "{{idEstudiante}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "5.9 Actualizar Datos del Semillero",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Semillero de Inteligencia Artificial y Robótica Avanzada\",\n  \"codigo\": \"SIAR-2026\",\n  \"lineaInvestigacion\": \"Modelos de Lenguaje, Agentes Autónomos y Robótica Móvil\",\n  \"descripcion\": \"Espacio formativo para proyectos de semillero e investigación de alto impacto.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/semilleros/{{idSemillero}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "semilleros",
+                "{{idSemillero}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "5.10 Eliminar Semillero",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/semilleros/{{idSemillero}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "semilleros",
+                "{{idSemillero}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Actividades de Semillero (Tareas)",
+      "description": "Flujo de entregables y actividades del semillero sin topes artificiales.",
+      "item": [
+        {
+          "name": "6.1 Crear Actividad de Semillero",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Revisión Bibliográfica de Estado del Arte\",\n  \"descripcion\": \"Construir matriz analítica con mínimo 10 artículos indexados (Scopus/IEEE) sobre aprendizaje profundo en robótica de los últimos 3 años.\",\n  \"fechaEntrega\": \"2026-11-20 23:59:59\",\n  \"prioridad\": \"ALTA\",\n  \"material\": \"https://campus.universidad.edu.co/semilleros/guias/guia_ieee.pdf\",\n  \"semilleroId\": 1,\n  \"profesorId\": 1,\n  \"estudianteId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tareas?semilleroId={{idSemillero}}&profesorId={{idProfesor}}&estudianteId={{idEstudiante}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tareas"
+              ],
+              "query": [
+                {
+                  "key": "semilleroId",
+                  "value": "{{idSemillero}}"
+                },
+                {
+                  "key": "profesorId",
+                  "value": "{{idProfesor}}"
+                },
+                {
+                  "key": "estudianteId",
+                  "value": "{{idEstudiante}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "6.2 Listar Todas las Actividades",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tareas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tareas"
+              ]
+            }
+          }
+        },
+        {
+          "name": "6.3 Obtener Actividad por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tareas/{{idTarea}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tareas",
+                "{{idTarea}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "6.4 Mis Actividades (Vista Directa Estudiante)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tareas/estudiante/{{idEstudiante}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tareas",
+                "estudiante",
+                "{{idEstudiante}}"
+              ]
+            },
+            "description": "El semillerista consulta directamente sus entregables y estado."
+          }
+        },
+        {
+          "name": "6.5 Consultar Actividades de un Semillero",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tareas/semillero/{{idSemillero}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tareas",
+                "semillero",
+                "{{idSemillero}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "6.6 Consultar Actividades Asignadas por Tutor",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tareas/profesor/{{idProfesor}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tareas",
+                "profesor",
+                "{{idProfesor}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "6.7 Consultar Actividades Urgentes (< 24h)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tareas/urgentes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tareas",
+                "urgentes"
+              ]
+            }
+          }
+        },
+        {
+          "name": "6.8 Filtrar Actividades por Estado (PENDIENTE)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tareas/estado/PENDIENTE",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tareas",
+                "estado",
+                "PENDIENTE"
+              ]
+            }
+          }
+        },
+        {
+          "name": "6.9 Semillerista Entrega la Actividad (Pasa a ENTREGADA)",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tareas/{{idTarea}}/entregar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tareas",
+                "{{idTarea}}",
+                "entregar"
+              ]
+            },
+            "description": "Actualiza el estado de la actividad a ENTREGADA."
+          }
+        },
+        {
+          "name": "6.10 Tutor Califica y Retroalimenta con Observaciones",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tareas/{{idTarea}}/calificar?observaciones=Excelente trabajo de síntesis bibliográfica. Las fuentes indexadas IEEE son pertinentes.&nota=4.8&profesorId={{idProfesor}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tareas",
+                "{{idTarea}}",
+                "calificar"
+              ],
+              "query": [
+                {
+                  "key": "observaciones",
+                  "value": "Excelente trabajo de síntesis bibliográfica. Las fuentes indexadas IEEE son pertinentes."
+                },
+                {
+                  "key": "nota",
+                  "value": "4.8"
+                },
+                {
+                  "key": "profesorId",
+                  "value": "{{idProfesor}}"
+                }
+              ]
+            },
+            "description": "Guarda la retroalimentación textual y nota, actualizando el estado a CALIFICADA."
+          }
+        },
+        {
+          "name": "6.11 Eliminar Actividad",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tareas/{{idTarea}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tareas",
+                "{{idTarea}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Casos de Prueba de Reglas de Negocio y Errores",
+      "description": "Casos de validación de reglas de semillero (respuestas esperadas 400 y 404).",
+      "item": [
+        {
+          "name": "7.1 Error: Intentar Asignar un Segundo Semillero al Profesor (Tope 1)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/profesores/{{idProfesor}}/asignar-semillero/2",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "profesores",
+                "{{idProfesor}}",
+                "asignar-semillero",
+                "2"
+              ]
+            },
+            "description": "Debe rechazar con HTTP 400 Bad Request: 'El profesor ya tiene un semillero asignado. El límite es 1 semillero por docente.'"
+          }
+        },
+        {
+          "name": "7.2 Error: Intentar Inscribir a un Estudiante en un Segundo Semillero (Tope 1)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/estudiantes/{{idEstudiante}}/inscribir-semillero/2",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "estudiantes",
+                "{{idEstudiante}}",
+                "inscribir-semillero",
+                "2"
+              ]
+            },
+            "description": "Debe rechazar con HTTP 400 Bad Request: 'El estudiante ya pertenece a un semillero. El límite es 1 semillero por estudiante.'"
+          }
+        },
+        {
+          "name": "7.3 Error: Calificar con Nota Fuera de Rango (ej: 5.5)",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tareas/{{idTarea}}/calificar?nota=5.5",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tareas",
+                "{{idTarea}}",
+                "calificar"
+              ],
+              "query": [
+                {
+                  "key": "nota",
+                  "value": "5.5"
+                }
+              ]
+            },
+            "description": "Debe responder HTTP 400 Bad Request: 'La calificación debe estar entre 0.0 y 5.0.'"
+          }
+        },
+        {
+          "name": "7.4 Error: Crear Actividad con Título Vacío",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"\",\n  \"descripcion\": \"Sin titulo\",\n  \"fechaEntrega\": \"2026-11-20 18:00:00\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tareas?semilleroId={{idSemillero}}&profesorId={{idProfesor}}&estudianteId={{idEstudiante}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tareas"
+              ],
+              "query": [
+                {
+                  "key": "semilleroId",
+                  "value": "{{idSemillero}}"
+                },
+                {
+                  "key": "profesorId",
+                  "value": "{{idProfesor}}"
+                },
+                {
+                  "key": "estudianteId",
+                  "value": "{{idEstudiante}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "7.5 Error: Crear Semillero sin Nombre Obligatorio",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"\",\n  \"codigo\": \"SIAR\",\n  \"lineaInvestigacion\": \"Robótica\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/semilleros",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "semilleros"
+              ]
+            }
+          }
+        },
+        {
+          "name": "7.6 Error 404: Buscar Semillero Inexistente",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/semilleros/9999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "semilleros",
+                "9999"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
